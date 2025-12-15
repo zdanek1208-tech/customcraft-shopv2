@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CustomCraft - Server Minecraft</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00ff88;
+            --secondary: #ff6b35;
+            --rare: #4a9eff;
+            --epic: #a64dff;
+            --legendary: #ffaa00;
+            --mythic: #ff1744;
+            --dark-bg: #0a0e1a;
+            --card-bg: #151b2d;
+            --text-primary: #ffffff;
+            --text-secondary: #a0aec0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Config Button */
+        .config-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            background: linear-gradient(135deg, var(--primary), #00cc6f);
+            color: var(--dark-bg);
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0, 255, 136, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .config-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 255, 136, 0.5);
+        }
+
+        /* Voucher Admin Button */
+        .voucher-admin-button {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            z-index: 9999;
+            background: linear-gradient(135deg, var(--secondary), #ff8c5a);
+            color: var(--text-primary);
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(255, 107, 53, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .voucher-admin-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.5);
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, #0a0e1a 0%, #1a1f35 50%, #0a0e1a 100%);
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background-image: 
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 255, 136, 0.03) 2px, rgba(0, 255, 136, 0.03) 4px),
+                repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(0, 255, 136, 0.03) 2px, rgba(0, 255, 136, 0.03) 4px);
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            padding: 60px 20px 40px;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 4rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--primary));
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease infinite;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 40px rgba(0, 255, 136, 0.5);
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+            margin-bottom: 30px;
+        }
+
+        /* IP Box */
+        .ip-box {
+            background: var(--card-bg);
+            border: 2px solid var(--primary);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 40px auto;
+            max-width: 600px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 1s ease-out 0.3s backwards;
+            box-shadow: 0 10px 40px rgba(0, 255, 136, 0.2);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .ip-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(0, 255, 136, 0.1), transparent);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .ip-label {
+            font-size: 1.2rem;
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .ip-address {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .version {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            position: relative;
+            z-index: 1;
+        }
+
+        .copy-btn {
+            background: linear-gradient(135deg, var(--primary), #00cc6f);
+            border: none;
+            color: var(--dark-bg);
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .copy-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 255, 136, 0.4);
+        }
+
+        .voucher-btn {
+            background: linear-gradient(135deg, var(--secondary), #ff8c5a);
+            border: none;
+            color: var(--text-primary);
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .voucher-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255, 107, 53, 0.4);
+        }
+
+        /* Section Titles */
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin: 60px 0 40px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        /* VIP Ranks */
+        .ranks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .rank-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 40px 30px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            animation: fadeInUp 1s ease-out;
+            border: 2px solid transparent;
+        }
+
+        .rank-card:nth-child(1) {
+            animation-delay: 0.4s;
+            animation-fill-mode: backwards;
+        }
+
+        .rank-card:nth-child(2) {
+            animation-delay: 0.6s;
+            animation-fill-mode: backwards;
+        }
+
+        .rank-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--rank-color), transparent);
+            opacity: 0.8;
+        }
+
+        .rank-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border-color: var(--rank-color);
+        }
+
+        .rank-card.vip {
+            --rank-color: var(--secondary);
+        }
+
+        .rank-card.vip-plus {
+            --rank-color: var(--legendary);
+        }
+
+        .rank-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            display: block;
+            text-align: center;
+        }
+
+        .rank-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--rank-color);
+        }
+
+        .rank-features {
+            list-style: none;
+            padding: 0;
+        }
+
+        .rank-features li {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .rank-features li::before {
+            content: '✦';
+            color: var(--rank-color);
+            margin-right: 12px;
+            font-size: 1.3rem;
+        }
+
+        .rank-price {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid var(--rank-color);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--rank-color);
+            text-align: center;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .buy-btn {
+            margin-top: 20px;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, var(--rank-color), var(--rank-color));
+            border: none;
+            border-radius: 10px;
+            color: var(--dark-bg);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            text-transform: uppercase;
+        }
+
+        .buy-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            filter: brightness(1.2);
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.05);
+                opacity: 0.9;
+            }
+        }
+
+        /* Keys */
+        .keys-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 60px;
+        }
+
+        .key-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 30px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 2px solid var(--key-color);
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .key-card:nth-child(1) {
+            --key-color: var(--rare);
+            animation-delay: 0.5s;
+            animation-fill-mode: backwards;
+        }
+
+        .key-card:nth-child(2) {
+            --key-color: var(--epic);
+            animation-delay: 0.6s;
+            animation-fill-mode: backwards;
+        }
+
+        .key-card:nth-child(3) {
+            --key-color: var(--legendary);
+            animation-delay: 0.7s;
+            animation-fill-mode: backwards;
+        }
+
+        .key-card:nth-child(4) {
+            --key-color: var(--mythic);
+            animation-delay: 0.8s;
+            animation-fill-mode: backwards;
+        }
+
+        .key-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .key-card:hover::before {
+            left: 100%;
+        }
+
+        .key-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.4);
+        }
+
+        .key-icon {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 0 10px var(--key-color));
+        }
+
+        .key-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--key-color);
+            margin-bottom: 10px;
+        }
+
+        .key-description {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .key-price {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 2px solid var(--key-color);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--key-color);
+            text-shadow: 0 0 15px var(--key-color);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            margin: 5% auto;
+            padding: 40px;
+            border: 2px solid var(--primary);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .close {
+            color: var(--text-secondary);
+            float: right;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            line-height: 1;
+        }
+
+        .close:hover {
+            color: var(--primary);
+        }
+
+        .modal-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px;
+            background: var(--dark-bg);
+            border: 2px solid rgba(0, 255, 136, 0.3);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--primary), #00cc6f);
+            border: none;
+            border-radius: 10px;
+            color: var(--dark-bg);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.4);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 60px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 2.5rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .ip-address {
+                font-size: 1.5rem;
+            }
+            
+            .ranks-grid,
+            .keys-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .config-button {
+                top: 10px;
+                right: 10px;
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+
+            .voucher-admin-button {
+                top: 55px;
+                right: 10px;
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    
+    <button class="config-button" onclick="openConfigModal()">⚙️ Konfiguracja</button>
+    <button class="voucher-admin-button" onclick="openVoucherGenerator()">🎫 Generuj Voucher</button>
+
+    <div class="container">
+        <header>
+            <h1 class="logo">CustomCraft</h1>
+            <p class="subtitle">Najlepszy Serwer Minecraft w Polsce</p>
+        </header>
+
+        <div class="ip-box">
+            <div class="ip-label">IP SERWERA</div>
+            <div class="ip-address" id="serverIP">CustomCraft.serv.cx</div>
+            <div class="version">Wersja: 1.21.7</div>
+            <button class="copy-btn" onclick="copyIP()">📋 Kopiuj IP</button>
+            <button class="voucher-btn" onclick="openVoucherModal()">🎫 Mam voucher</button>
+        </div>
+
+        <h2 class="section-title">⭐ Rangi VIP ⭐</h2>
+        
+        <div class="ranks-grid">
+            <div class="rank-card vip">
+                <div class="rank-icon">💎</div>
+                <h3 class="rank-name">VIP</h3>
+                <ul class="rank-features">
+                    <li>Dostęp do kita VIP</li>
+                    <li>Kolorowy nick na chatcie i tabie</li>
+                    <li>Obowiązuje na miesiąc</li>
+                </ul>
+                <div class="rank-price">10 zł</div>
+                <button class="buy-btn" onclick="openPurchaseModal('VIP', 10, false)">🛒 Kup teraz</button>
+            </div>
+
+            <div class="rank-card vip-plus">
+                <div class="rank-icon">👑</div>
+                <h3 class="rank-name">VIP+</h3>
+                <ul class="rank-features">
+                    <li>Wszystkie korzyści VIP</li>
+                    <li>Inny kolor nicku na chatcie i tabie</li>
+                    <li>Kit VIP+</li>
+                    <li>Obowiązuje na miesiąc</li>
+                </ul>
+                <div class="rank-price">20 zł</div>
+                <button class="buy-btn" onclick="openPurchaseModal('VIP+', 20, false)">🛒 Kup teraz</button>
+            </div>
+        </div>
+
+        <h2 class="section-title">🔑 System Kluczy 🔑</h2>
+        
+        <div class="keys-grid">
+            <div class="key-card">
+                <div class="key-icon">🔵</div>
+                <h3 class="key-name">RZADKI</h3>
+                <p class="key-description">Podstawowe nagrody: diamenty, złoto, żywność i podstawowe materiały do budowy</p>
+                <div class="key-price">3 zł</div>
+                <button class="buy-btn" onclick="openPurchaseModal('Klucz Rzadki', 3, true)">🛒 Kup teraz</button>
+            </div>
+
+            <div class="key-card">
+                <div class="key-icon">🟣</div>
+                <h3 class="key-name">EPICKI</h3>
+                <p class="key-description">Cenne przedmioty: zaklęte narzędzia, zbroje i surowce</p>
+                <div class="key-price">5 zł</div>
+                <button class="buy-btn" onclick="openPurchaseModal('Klucz Epicki', 5, true)">🛒 Kup teraz</button>
+            </div>
+
+            <div class="key-card">
+                <div class="key-icon">🟡</div>
+                <h3 class="key-name">LEGENDARNY</h3>
+                <p class="key-description">Potężne itemy: diamentowa zbroja, diamentowe narzędzia, shulker boxy, surowce i ranga VIP na tydzień</p>
+                <div class="key-price">10 zł</div>
+                <button class="buy-btn" onclick="openPurchaseModal('Klucz Legendarny', 10, true)">🛒 Kup teraz</button>
+            </div>
+
+            <div class="key-card">
+                <div class="key-icon">🔴</div>
+                <h3 class="key-name">MITYCZNY</h3>
+                <p class="key-description">Najrzadsze nagrody: diamentowa zbroja, diamentowe narzędzia, shulker boxy, surowce i ranga VIP lub VIP+ na tydzień</p>
+                <div class="key-price">15 zł</div>
+                <button class="buy-btn" onclick="openPurchaseModal('Klucz Mityczny', 15, true)">🛒 Kup teraz</button>
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2024 CustomCraft Server | Wszystkie prawa zastrzeżone</p>
+            <p style="margin-top: 10px; font-size: 0.9rem;">Dołącz do nas i rozpocznij swoją przygodę!</p>
+        </footer>
+    </div>
+
+    <!-- Modal Generowania Vouchera (ADMIN) -->
+    <div id="voucherGenModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeVoucherGenModal()">&times;</span>
+            <h2 class="modal-title">🎫 Generuj Voucher (Admin)</h2>
+            
+            <form id="voucherGenForm" onsubmit="generateVoucher(event)">
+                <div class="form-group">
+                    <label class="form-label">Typ nagrody:</label>
+                    <select id="voucherItemType" class="form-input" required>
+                        <option value="">-- Wybierz --</option>
+                        <option value="VIP">Ranga VIP (30 dni)</option>
+                        <option value="VIP+">Ranga VIP+ (30 dni)</option>
+                        <option value="Klucz Rzadki">Klucz Rzadki</option>
+                        <option value="Klucz Epicki">Klucz Epicki</option>
+                        <option value="Klucz Legendarny">Klucz Legendarny</option>
+                        <option value="Klucz Mityczny">Klucz Mityczny</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Ilość (tylko dla kluczy):</label>
+                    <input type="number" id="voucherQuantity" class="form-input" value="1" min="1" max="64">
+                </div>
+
+                <button type="submit" class="submit-btn" id="voucherGenBtn">
+                    ✨ Wygeneruj voucher
+                </button>
+            </form>
+
+            <div id="voucherGenResult" style="display: none; margin-top: 30px; padding: 20px; background: rgba(0, 255, 136, 0.1); border-radius: 10px;">
+                <p style="font-size: 1.1rem; color: var(--primary); text-align: center; margin-bottom: 15px;">
+                    <strong>✅ Voucher wygenerowany!</strong>
+                </p>
+                <div style="background: var(--dark-bg); padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 15px;">
+                    <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 10px;">Kod vouchera:</p>
+                    <p id="generatedVoucherCode" style="font-family: 'Orbitron', monospace; font-size: 1.5rem; color: var(--primary); font-weight: 700; letter-spacing: 2px; margin-bottom: 15px;">VOUCHER-XXXXXXXX</p>
+                    <button onclick="copyVoucherCode()" class="submit-btn" style="padding: 10px 20px; font-size: 0.9rem;">
+                        📋 Kopiuj kod
+                    </button>
+                </div>
+                <p style="font-size: 0.9rem; color: var(--text-secondary); text-align: center;">
+                    💡 Rozdaj ten kod graczom! Mogą go aktywować klikając "🎫 Mam voucher" na stronie.
+                </p>
+            </div>
+
+            <div style="margin-top: 30px; padding: 20px; background: rgba(255, 107, 53, 0.1); border-radius: 10px;">
+                <p style="font-size: 0.9rem; color: var(--text-secondary); text-align: center;">
+                    🔑 <strong>Hasło admina:</strong> SpinjistuMaster<br>
+                    📋 <strong>Aby zobaczyć wszystkie vouchery:</strong><br>
+                    Otwórz panel admina (admin-vouchers.html)
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Konfiguracji -->
+    <div id="configModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeConfigModal()">&times;</span>
+            <h2 class="modal-title">⚙️ Konfiguracja</h2>
+            
+            <form id="configForm" onsubmit="saveConfig(event)">
+                <div class="form-group">
+                    <label class="form-label">PayPal Client ID:</label>
+                    <input type="text" id="paypalClientId" class="form-input" placeholder="Wklej Client ID z PayPal Developer">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">URL Backendu (Replit):</label>
+                    <input type="text" id="backendUrl" class="form-input" placeholder="https://nazwa-projektu.repl.co">
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    💾 Zapisz konfigurację
+                </button>
+            </form>
+
+            <div style="margin-top: 30px; padding: 20px; background: rgba(0, 255, 136, 0.1); border-radius: 10px;">
+                <p style="font-size: 0.9rem; color: var(--text-secondary); text-align: center;">
+                    💡 <strong>Nie wiesz gdzie to znaleźć?</strong><br>
+                    Sprawdź instrukcję <strong>INSTRUKCJA_SETUP.md</strong>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Vouchera -->
+    <div id="voucherModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeVoucherModal()">&times;</span>
+            <h2 class="modal-title">🎫 Odbierz Voucher</h2>
+            
+            <form id="voucherForm" onsubmit="redeemVoucher(event)">
+                <div class="form-group">
+                    <label class="form-label">Nick Minecraft:</label>
+                    <input type="text" id="voucherNick" class="form-input" placeholder="Wpisz swój nick..." required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Kod Vouchera:</label>
+                    <input type="text" id="voucherCode" class="form-input" placeholder="VOUCHER-XXXXXXXX" required style="text-transform: uppercase;">
+                </div>
+
+                <button type="submit" class="submit-btn" id="voucherSubmitBtn">
+                    ✨ Odbierz nagrody
+                </button>
+            </form>
+
+            <div style="margin-top: 30px; padding: 20px; background: rgba(0, 255, 136, 0.1); border-radius: 10px;">
+                <p style="font-size: 0.9rem; color: var(--text-secondary); text-align: center;">
+                    💡 <strong>Gdzie dostać voucher?</strong><br>
+                    Vouchery otrzymujesz po zakupie, z eventów,<br>
+                    konkursów lub od administracji serwera.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Zakupu -->
+    <div id="purchaseModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closePurchaseModal()">&times;</span>
+            <h2 class="modal-title" id="modalTitle">Zakup</h2>
+            <div id="purchaseContent"></div>
+        </div>
+    </div>
+
+    <!-- PayPal SDK - będzie ładowany dynamicznie -->
+    <div id="paypal-sdk-container"></div>
+
+    <script>
+        // ========================================
+        // KONFIGURACJA
+        // ========================================
+        
+        let CONFIG = {
+            paypalClientId: localStorage.getItem('paypalClientId') || '',
+            backendUrl: localStorage.getItem('backendUrl') || '',
+        };
+
+        let currentItem = '';
+        let currentPrice = 0;
+        let currentQuantity = 1;
+        let isKey = false;
+
+        // Załaduj PayPal SDK dynamicznie
+        function loadPayPalSDK() {
+            if (!CONFIG.paypalClientId) {
+                console.warn('PayPal Client ID nie jest skonfigurowany');
+                return;
+            }
+
+            const script = document.createElement('script');
+            script.src = `https://www.paypal.com/sdk/js?client-id=${CONFIG.paypalClientId}&currency=PLN&locale=pl_PL`;
+            script.onload = () => console.log('PayPal SDK załadowany');
+            document.getElementById('paypal-sdk-container').appendChild(script);
+        }
+
+        // Załaduj SDK przy starcie
+        if (CONFIG.paypalClientId) {
+            loadPayPalSDK();
+        }
+
+        // ========================================
+        // HASŁO ADMINA
+        // ========================================
+        
+        const ADMIN_PASSWORD = 'SpinjistuMaster';
+
+        // ========================================
+        // MODAL KONFIGURACJI (Z HASŁEM)
+        // ========================================
+
+        function openConfigModal() {
+            const password = prompt('🔒 Wpisz hasło admina:');
+            
+            if (password !== ADMIN_PASSWORD) {
+                alert('❌ Nieprawidłowe hasło!');
+                return;
+            }
+            
+            document.getElementById('paypalClientId').value = CONFIG.paypalClientId;
+            document.getElementById('backendUrl').value = CONFIG.backendUrl;
+            document.getElementById('configModal').style.display = 'block';
+        }
+
+        function closeConfigModal() {
+            document.getElementById('configModal').style.display = 'none';
+        }
+
+        function saveConfig(event) {
+            event.preventDefault();
+            
+            CONFIG.paypalClientId = document.getElementById('paypalClientId').value.trim();
+            CONFIG.backendUrl = document.getElementById('backendUrl').value.trim();
+            
+            localStorage.setItem('paypalClientId', CONFIG.paypalClientId);
+            localStorage.setItem('backendUrl', CONFIG.backendUrl);
+            
+            alert('✅ Konfiguracja zapisana!\n\nOdśwież stronę aby zastosować zmiany.');
+            closeConfigModal();
+            location.reload();
+        }
+
+        // ========================================
+        // FUNKCJE VOUCHERA
+        // ========================================
+
+        function openVoucherModal() {
+            if (!CONFIG.backendUrl) {
+                alert('⚠️ Skonfiguruj najpierw backend!\n\nKliknij "⚙️ Konfiguracja" w prawym górnym rogu.');
+                return;
+            }
+
+            document.getElementById('voucherNick').value = '';
+            document.getElementById('voucherCode').value = '';
+            document.getElementById('voucherModal').style.display = 'block';
+        }
+
+        function closeVoucherModal() {
+            document.getElementById('voucherModal').style.display = 'none';
+        }
+
+        // ========================================
+        // FUNKCJE GENEROWANIA VOUCHERA (ADMIN)
+        // ========================================
+
+        function openVoucherGenerator() {
+            const password = prompt('🔒 Wpisz hasło admina:');
+            
+            if (password !== ADMIN_PASSWORD) {
+                alert('❌ Nieprawidłowe hasło!');
+                return;
+            }
+
+            if (!CONFIG.backendUrl) {
+                alert('⚠️ Skonfiguruj najpierw backend!\n\nKliknij "⚙️ Konfiguracja" w prawym górnym rogu.');
+                return;
+            }
+            
+            document.getElementById('voucherGenResult').style.display = 'none';
+            document.getElementById('voucherGenModal').style.display = 'block';
+        }
+
+        function closeVoucherGenModal() {
+            document.getElementById('voucherGenModal').style.display = 'none';
+        }
+
+        async function generateVoucher(event) {
+            event.preventDefault();
+            
+            const itemType = document.getElementById('voucherItemType').value;
+            const quantity = parseInt(document.getElementById('voucherQuantity').value);
+            const submitBtn = document.getElementById('voucherGenBtn');
+            
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ Generuję voucher...';
+            
+            try {
+                const response = await fetch(`${CONFIG.backendUrl}/api/create-voucher`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        item_type: itemType,
+                        quantity: quantity,
+                        admin_key: ADMIN_PASSWORD
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Pokaż wygenerowany kod
+                    document.getElementById('generatedVoucherCode').textContent = result.voucher.code;
+                    document.getElementById('voucherGenResult').style.display = 'block';
+                    
+                    // Reset formularza
+                    document.getElementById('voucherGenForm').reset();
+                } else {
+                    alert('❌ Błąd: ' + (result.message || 'Nie udało się wygenerować vouchera'));
+                }
+                
+            } catch (error) {
+                console.error('Błąd:', error);
+                alert('❌ Błąd połączenia z serwerem.\n\nSprawdź czy backend działa poprawnie.');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '✨ Wygeneruj voucher';
+            }
+        }
+
+        function copyVoucherCode() {
+            const code = document.getElementById('generatedVoucherCode').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                alert('✅ Kod skopiowany!\n\n' + code + '\n\nMożesz teraz rozdać go graczom!');
+            });
+        }
+
+        async function redeemVoucher(event) {
+            event.preventDefault();
+            
+            const nick = document.getElementById('voucherNick').value.trim();
+            const code = document.getElementById('voucherCode').value.trim().toUpperCase();
+            const submitBtn = document.getElementById('voucherSubmitBtn');
+            
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ Sprawdzam voucher...';
+            
+            try {
+                const response = await fetch(`${CONFIG.backendUrl}/api/redeem-voucher`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        minecraft_nick: nick,
+                        voucher_code: code
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showVoucherSuccess(result);
+                } else {
+                    showVoucherError(result.message || 'Nieprawidłowy kod vouchera');
+                }
+                
+            } catch (error) {
+                console.error('Błąd:', error);
+                showVoucherError('Błąd połączenia z serwerem. Sprawdź konfigurację backendu.');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '✨ Odbierz nagrody';
+            }
+        }
+
+        function showVoucherSuccess(result) {
+            const modal = document.getElementById('voucherModal');
+            const modalContent = modal.querySelector('.modal-content');
+            
+            modalContent.innerHTML = `
+                <span class="close" onclick="closeVoucherModal(); location.reload();">&times;</span>
+                <h2 class="modal-title" style="color: var(--primary);">✅ Voucher aktywowany!</h2>
+                
+                <div style="padding: 20px; text-align: center;">
+                    <div style="background: rgba(0, 255, 136, 0.1); padding: 30px; border-radius: 15px; margin-bottom: 20px;">
+                        <p style="font-size: 1.5rem; margin-bottom: 20px;">🎉 Gratulacje!</p>
+                        <p style="font-size: 1.2rem; margin-bottom: 10px;">📦 <strong>${result.reward}</strong></p>
+                        <p style="font-size: 1.1rem; color: var(--text-secondary);">dla: <strong>${result.minecraft_nick}</strong></p>
+                    </div>
+                    
+                    <div style="background: rgba(0, 255, 136, 0.1); padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                        <p style="color: var(--primary); font-weight: 600; margin-bottom: 10px;">✨ Nagrody nadane!</p>
+                        <p style="font-size: 0.9rem; color: var(--text-secondary);">
+                            Wejdź na serwer aby odebrać swoje nagrody!<br>
+                            <strong>IP: CustomCraft.serv.cx</strong>
+                        </p>
+                    </div>
+                    
+                    <button onclick="closeVoucherModal(); location.reload();" class="submit-btn">
+                        🎮 Zamknij
+                    </button>
+                </div>
+            `;
+        }
+
+        function showVoucherError(message) {
+            alert('❌ ' + message + '\n\nSprawdź czy:\n• Kod vouchera jest poprawny\n• Voucher nie został już wykorzystany\n• Nick jest prawidłowy');
+        }
+
+        // ========================================
+        // FUNKCJE ZAKUPU
+        // ========================================
+
+        function openPurchaseModal(itemName, price, hasQuantity) {
+            if (!CONFIG.paypalClientId) {
+                alert('⚠️ Skonfiguruj najpierw PayPal!\n\nKliknij "⚙️ Konfiguracja" w prawym górnym rogu.');
+                return;
+            }
+
+            if (!CONFIG.backendUrl) {
+                alert('⚠️ Skonfiguruj najpierw backend!\n\nKliknij "⚙️ Konfiguracja" w prawym górnym rogu.');
+                return;
+            }
+
+            currentItem = itemName;
+            currentPrice = price;
+            currentQuantity = 1;
+            isKey = hasQuantity;
+
+            document.getElementById('modalTitle').textContent = 'Zakup: ' + itemName;
+            
+            const content = document.getElementById('purchaseContent');
+            content.innerHTML = `
+                <form id="purchaseForm" onsubmit="proceedToPayPal(event)">
+                    <div class="form-group">
+                        <label class="form-label">Nick Minecraft:</label>
+                        <input type="text" id="minecraftNick" class="form-input" placeholder="Wpisz swój nick..." required>
+                    </div>
+
+                    ${hasQuantity ? `
+                    <div class="form-group">
+                        <label class="form-label">Ilość:</label>
+                        <div style="display: flex; align-items: center; gap: 15px; margin-top: 10px;">
+                            <button type="button" onclick="changeQuantity(-1)" style="width: 40px; height: 40px; background: var(--primary); border: none; border-radius: 8px; color: var(--dark-bg); font-size: 1.5rem; cursor: pointer;">-</button>
+                            <div id="quantityDisplay" style="flex: 1; text-align: center; font-size: 1.5rem; font-weight: 700; color: var(--primary);">1</div>
+                            <button type="button" onclick="changeQuantity(1)" style="width: 40px; height: 40px; background: var(--primary); border: none; border-radius: 8px; color: var(--dark-bg); font-size: 1.5rem; cursor: pointer;">+</button>
+                        </div>
+                    </div>
+                    ` : ''}
+
+                    <div style="text-align: center; font-family: 'Orbitron', sans-serif; font-size: 1.8rem; font-weight: 900; color: var(--primary); margin: 20px 0; padding: 15px; background: rgba(0, 255, 136, 0.1); border-radius: 10px;" id="totalPrice">
+                        Łącznie: ${price.toFixed(2)} zł
+                    </div>
+
+                    <button type="submit" class="submit-btn" id="submitBtn">
+                        💳 Przejdź do płatności PayPal
+                    </button>
+                </form>
+            `;
+
+            document.getElementById('purchaseModal').style.display = 'block';
+        }
+
+        function closePurchaseModal() {
+            document.getElementById('purchaseModal').style.display = 'none';
+        }
+
+        function changeQuantity(change) {
+            currentQuantity = Math.max(1, currentQuantity + change);
+            document.getElementById('quantityDisplay').textContent = currentQuantity;
+            updateTotalPrice();
+        }
+
+        function updateTotalPrice() {
+            const total = (currentPrice * currentQuantity).toFixed(2);
+            document.getElementById('totalPrice').textContent = 'Łącznie: ' + total + ' zł';
+        }
+
+        async function proceedToPayPal(event) {
+            event.preventDefault();
+            
+            const nick = document.getElementById('minecraftNick').value.trim();
+            const total = (currentPrice * currentQuantity).toFixed(2);
+            
+            // Zamknij formularz i pokaż PayPal
+            const content = document.getElementById('purchaseContent');
+            content.innerHTML = `
+                <div style="padding: 20px; text-align: center;">
+                    <div style="background: rgba(0, 255, 136, 0.1); padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                        <p style="font-size: 1.1rem; margin-bottom: 10px;">📦 <strong>${currentItem}</strong> ${isKey ? 'x' + currentQuantity : ''}</p>
+                        <p style="font-size: 1.1rem; margin-bottom: 10px;">👤 Nick: <strong>${nick}</strong></p>
+                        <p style="font-size: 1.5rem; color: var(--primary); font-weight: 700;">💰 ${total} PLN</p>
+                    </div>
+                    
+                    <p style="margin-bottom: 20px; color: var(--text-secondary);">Wybierz metodę płatności PayPal:</p>
+                    
+                    <div id="paypal-button-container"></div>
+                    
+                    <p style="margin-top: 20px; font-size: 0.9rem; color: var(--text-secondary);">
+                        🔒 Bezpieczna płatność przez PayPal<br>
+                        💳 BLIK, Karta, Przelew
+                    </p>
+                </div>
+            `;
+
+            // Inicjalizuj przyciski PayPal
+            if (typeof paypal !== 'undefined') {
+                paypal.Buttons({
+                    style: {
+                        layout: 'vertical',
+                        color: 'gold',
+                        shape: 'rect',
+                        label: 'paypal'
+                    },
+                    
+                    createOrder: function(data, actions) {
+                        return actions.order.create({
+                            purchase_units: [{
+                                amount: {
+                                    value: total,
+                                    currency_code: 'PLN'
+                                },
+                                description: `${currentItem}${isKey ? ' x' + currentQuantity : ''} - CustomCraft MC`,
+                                custom_id: JSON.stringify({
+                                    minecraft_nick: nick,
+                                    item_type: currentItem,
+                                    quantity: currentQuantity,
+                                    server_ip: 'CustomCraft.serv.cx'
+                                })
+                            }]
+                        });
+                    },
+                    
+                    onApprove: async function(data, actions) {
+                        const details = await actions.order.capture();
+                        await handlePaymentSuccess(details, nick);
+                    },
+                    
+                    onError: function(err) {
+                        console.error('Błąd PayPal:', err);
+                        alert('❌ Wystąpił błąd podczas płatności. Spróbuj ponownie.');
+                        closePurchaseModal();
+                    }
+                }).render('#paypal-button-container');
+            } else {
+                alert('❌ PayPal SDK nie jest załadowany. Odśwież stronę i spróbuj ponownie.');
+            }
+        }
+
+        async function handlePaymentSuccess(details, nick) {
+            const transactionId = details.id;
+            const payerEmail = details.payer.email_address;
+            
+            try {
+                const response = await fetch(`${CONFIG.backendUrl}/api/paypal-webhook`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        transaction_id: transactionId,
+                        minecraft_nick: nick,
+                        item_type: currentItem,
+                        quantity: currentQuantity,
+                        amount: (currentPrice * currentQuantity).toFixed(2),
+                        payer_email: payerEmail,
+                        details: details
+                    })
+                });
+                
+                if (response.ok) {
+                    showSuccessMessage(transactionId, nick);
+                } else {
+                    showSuccessMessage(transactionId, nick, true);
+                }
+            } catch (error) {
+                console.error('Network error:', error);
+                showSuccessMessage(transactionId, nick, true);
+            }
+        }
+
+        function showSuccessMessage(transactionId, nick, manualVerification = false) {
+            const content = document.getElementById('purchaseContent');
+            
+            content.innerHTML = `
+                <div style="padding: 20px; text-align: center;">
+                    <div style="background: rgba(0, 255, 136, 0.1); padding: 30px; border-radius: 15px; margin-bottom: 20px;">
+                        <p style="font-size: 1.3rem; margin-bottom: 15px;">🎉 Płatność zakończona!</p>
+                        <p style="font-size: 1.1rem; margin-bottom: 10px;">📦 <strong>${currentItem}</strong> ${isKey ? 'x' + currentQuantity : ''}</p>
+                        <p style="font-size: 1.1rem; margin-bottom: 10px;">👤 Nick: <strong>${nick}</strong></p>
+                        <p style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 15px;">
+                            🔖 ID transakcji: ${transactionId.substring(0, 20)}...
+                        </p>
+                    </div>
+                    
+                    ${manualVerification ? `
+                        <div style="background: rgba(255, 107, 53, 0.1); padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                            <p style="color: var(--secondary); font-weight: 600; margin-bottom: 10px;">⚠️ Wymaga ręcznej weryfikacji</p>
+                            <p style="font-size: 0.9rem; color: var(--text-secondary);">
+                                Skontaktuj się z administracją serwera<br>
+                                i podaj ID transakcji aby otrzymać swoją rangę/klucze.
+                            </p>
+                        </div>
+                    ` : `
+                        <div style="background: rgba(0, 255, 136, 0.1); padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                            <p style="color: var(--primary); font-weight: 600; margin-bottom: 10px;">✨ Automatyczna aktywacja</p>
+                            <p style="font-size: 0.9rem; color: var(--text-secondary);">
+                                Twoja ranga/klucze zostaną nadane automatycznie<br>
+                                w ciągu kilku minut. Wejdź na serwer!
+                            </p>
+                        </div>
+                    `}
+                    
+                    <button onclick="closePurchaseModal(); location.reload();" class="submit-btn">
+                        🎮 Zamknij
+                    </button>
+                </div>
+            `;
+        }
+
+        // ========================================
+        // POMOCNICZE FUNKCJE
+        // ========================================
+
+        function copyIP() {
+            const ip = document.getElementById('serverIP').textContent;
+            navigator.clipboard.writeText(ip).then(() => {
+                const btn = event.target;
+                btn.textContent = '✓ Skopiowano!';
+                setTimeout(() => {
+                    btn.textContent = '📋 Kopiuj IP';
+                }, 2000);
+            });
+        }
+
+        // Zamykanie modali przy kliknięciu poza nimi
+        window.onclick = function(event) {
+            const purchaseModal = document.getElementById('purchaseModal');
+            const voucherModal = document.getElementById('voucherModal');
+            const configModal = document.getElementById('configModal');
+            const voucherGenModal = document.getElementById('voucherGenModal');
+            
+            if (event.target == purchaseModal) {
+                closePurchaseModal();
+            }
+            if (event.target == voucherModal) {
+                closeVoucherModal();
+            }
+            if (event.target == configModal) {
+                closeConfigModal();
+            }
+            if (event.target == voucherGenModal) {
+                closeVoucherGenModal();
+            }
+        }
+
+        // Sprawdź konfigurację przy starcie
+        window.addEventListener('load', () => {
+            if (!CONFIG.paypalClientId || !CONFIG.backendUrl) {
+                setTimeout(() => {
+                    if (confirm('⚠️ Strona nie jest skonfigurowana!\n\nCzy chcesz otworzyć panel konfiguracji?')) {
+                        openConfigModal();
+                    }
+                }, 1000);
+            }
+        });
+    </script>
+</body>
+</html>

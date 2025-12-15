@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Admina - CustomCraft Vouchers</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.5rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .voucher-result {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f0f9ff;
+            border-left: 4px solid #667eea;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .voucher-code {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+            margin: 10px 0;
+            letter-spacing: 2px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #f8f9fa;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .status-active {
+            color: #22c55e;
+            font-weight: 600;
+        }
+
+        .status-used {
+            color: #ef4444;
+            font-weight: 600;
+        }
+
+        .copy-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .copy-btn:hover {
+            background: #5568d3;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎫 Panel Voucherów - CustomCraft</h1>
+
+        <div class="stats" id="stats">
+            <div class="stat-card">
+                <div class="stat-value" id="totalVouchers">0</div>
+                <div class="stat-label">Wszystkie vouchery</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="activeVouchers">0</div>
+                <div class="stat-label">Aktywne</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="usedVouchers">0</div>
+                <div class="stat-label">Wykorzystane</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🎁 Utwórz nowy voucher</h2>
+            
+            <form id="voucherForm" onsubmit="createVoucher(event)">
+                <div class="form-group">
+                    <label>Klucz Admina:</label>
+                    <input type="password" id="adminKey" placeholder="SpinjistuMaster" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Typ nagrody:</label>
+                    <select id="itemType" required>
+                        <option value="">-- Wybierz --</option>
+                        <option value="VIP">Ranga VIP</option>
+                        <option value="VIP+">Ranga VIP+</option>
+                        <option value="Klucz Rzadki">Klucz Rzadki</option>
+                        <option value="Klucz Epicki">Klucz Epicki</option>
+                        <option value="Klucz Legendarny">Klucz Legendarny</option>
+                        <option value="Klucz Mityczny">Klucz Mityczny</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Ilość (tylko dla kluczy):</label>
+                    <input type="number" id="quantity" value="1" min="1" max="64">
+                </div>
+
+                <button type="submit" id="createBtn">✨ Wygeneruj voucher</button>
+            </form>
+
+            <div class="voucher-result" id="voucherResult">
+                <p><strong>✅ Voucher utworzony pomyślnie!</strong></p>
+                <p>Kod vouchera:</p>
+                <div class="voucher-code" id="generatedCode">VOUCHER-XXXXXXXX</div>
+                <button class="copy-btn" onclick="copyVoucherCode()">📋 Kopiuj kod</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📋 Lista voucherów</h2>
+            <button onclick="loadVouchers()" style="margin-bottom: 20px;">🔄 Odśwież listę</button>
+            
+            <div style="overflow-x: auto;">
+                <table id="vouchersTable">
+                    <thead>
+                        <tr>
+                            <th>Kod</th>
+                            <th>Nagroda</th>
+                            <th>Ilość</th>
+                            <th>Utworzony</th>
+                            <th>Status</th>
+                            <th>Wykorzystany przez</th>
+                            <th>Akcje</th>
+                        </tr>
+                    </thead>
+                    <tbody id="vouchersBody">
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 40px; color: #666;">
+                                Kliknij "Odśwież listę" aby załadować vouchery
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const BACKEND_URL = 'https://customcraft-backend.onrender.com'; // Zmień na swój URL z Render // Zmień na swój URL backendu
+
+        async function createVoucher(event) {
+            event.preventDefault();
+
+            const adminKey = document.getElementById('adminKey').value;
+            const itemType = document.getElementById('itemType').value;
+            const quantity = parseInt(document.getElementById('quantity').value);
+            const createBtn = document.getElementById('createBtn');
+
+            createBtn.disabled = true;
+            createBtn.textContent = '⏳ Tworzę voucher...';
+
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/create-voucher`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        admin_key: adminKey,
+                        item_type: itemType,
+                        quantity: quantity
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    document.getElementById('generatedCode').textContent = result.voucher.code;
+                    document.getElementById('voucherResult').style.display = 'block';
+                    document.getElementById('voucherForm').reset();
+                    
+                    // Odśwież listę i statystyki
+                    loadVouchers();
+                } else {
+                    alert('❌ ' + result.message);
+                }
+
+            } catch (error) {
+                console.error('Błąd:', error);
+                alert('❌ Błąd połączenia z serwerem');
+            } finally {
+                createBtn.disabled = false;
+                createBtn.textContent = '✨ Wygeneruj voucher';
+            }
+        }
+
+        async function loadVouchers() {
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/vouchers`);
+                const vouchers = await response.json();
+
+                // Statystyki
+                document.getElementById('totalVouchers').textContent = vouchers.length;
+                document.getElementById('activeVouchers').textContent = vouchers.filter(v => !v.redeemed).length;
+                document.getElementById('usedVouchers').textContent = vouchers.filter(v => v.redeemed).length;
+
+                // Tabela (sortuj od najnowszych)
+                const tbody = document.getElementById('vouchersBody');
+                tbody.innerHTML = '';
+
+                if (vouchers.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 40px; color: #666;">
+                                Brak voucherów
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                vouchers.reverse().forEach(voucher => {
+                    const row = document.createElement('tr');
+                    const date = new Date(voucher.created_at).toLocaleString('pl-PL');
+                    
+                    row.innerHTML = `
+                        <td><code>${voucher.code}</code></td>
+                        <td><strong>${voucher.item_type}</strong></td>
+                        <td>${voucher.quantity}</td>
+                        <td>${date}</td>
+                        <td class="${voucher.redeemed ? 'status-used' : 'status-active'}">
+                            ${voucher.redeemed ? '✅ Wykorzystany' : '⏳ Aktywny'}
+                        </td>
+                        <td>${voucher.redeemed_by || '-'}</td>
+                        <td>
+                            <button class="copy-btn" onclick="copyToClipboard('${voucher.code}')">
+                                📋 Kopiuj
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+
+            } catch (error) {
+                console.error('Błąd:', error);
+                alert('❌ Błąd ładowania voucherów');
+            }
+        }
+
+        function copyVoucherCode() {
+            const code = document.getElementById('generatedCode').textContent;
+            copyToClipboard(code);
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('✅ Skopiowano: ' + text);
+            });
+        }
+
+        // Załaduj vouchery przy starcie
+        window.addEventListener('load', () => {
+            loadVouchers();
+        });
+    </script>
+</body>
+</html>
